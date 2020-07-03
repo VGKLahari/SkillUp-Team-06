@@ -4,7 +4,7 @@
 {% if club %}
 <h1 class="text-emphasis-variant" style="font-family: fantasy;">{{club}} Club</h1><br><br>
 {% endif %}
-{%endblock%}
+
 {%block body %}
 
 {% if alert %}
@@ -18,7 +18,7 @@
 <form action ="admin/" method="post" >
 {% csrf_token %}
 <div class="form-group">
-<label for="exampleInputEmail1">Name</label>
+<label for="exampleInputEmail1">ID</label>
 <input required type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter ID" name="id">
 </div>
 <div class="form-group">
@@ -33,3 +33,4 @@
 </div>
 
 {% endblock %}
+{%endblock%}

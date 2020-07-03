@@ -25,6 +25,7 @@ ids=[]
 global sadmintoken
 global admintoken
 global params
+global tempclub
 @never_cache
 def delete_session(request):
 
@@ -47,8 +48,9 @@ def delete_session(request):
 
             del request.session['userid']
             del request.session['password']
-            club=''
-            ids=[]
+            club=None
+            ids=None
+            tempclub=None
             del request.session['club']
             del request.session['ids']
             logout(request)
@@ -139,12 +141,15 @@ def adminlog(request):
     global alert2
     global flag2
     global deleteadmin
+    global tempclub
     '''try:
         a=request.session['userid']
         b=request.session['password']
         return render(request,'admin.html')'''
 
     club = request.GET.get('club')
+    if(club):
+        tempclub=club
     if(flag2==1):
         alert2 = 1
         flag2 = 0
@@ -159,6 +164,7 @@ def admin(request):
     global flag2
     global admintoken
     global club
+    global tempclub
     try:
         id3 = request.session['userid']
         a = admintoken
@@ -169,6 +175,7 @@ def admin(request):
             aid = int(request.POST["id"])
             apword = request.POST["pword"]
             club = request.POST["club_name"]
+            club = tempclub
             response  = requests.post('http://localhost:5000/adminlog',data={'userid':aid,'password':apword,'clubname':club})
             result = response.json()
             #print(result)
@@ -176,7 +183,7 @@ def admin(request):
             try:
 
                 admintoken=result['access_token']
-                print('hi')
+                #print('hi')
                 request.session['userid'] =aid
                 request.session['password']=apword
                 request.session['club']=club
@@ -185,6 +192,7 @@ def admin(request):
             except:
                 alert2 = 1
                 flag2 = 1
+
                 return redirect(adminlog)
         else:
             try:
@@ -252,7 +260,7 @@ def mailadmin(request):
         html_message = render_to_string('mail_admin.html', {'user': param['username'],'password':param['password'],'clubname':param['clubname']})
         plain_message = strip_tags(html_message)
         from_email = 'teamcosc555@gmail.com'
-        print(admin_emailid)
+        #print(admin_emailid)
         to = admin_emailid[0]['emailid']
         send_mail(subject, plain_message, from_email, [to], html_message=html_message,fail_silently=False)
         return HttpResponse("Success")
@@ -292,6 +300,7 @@ def deleteadmin(request):
                 d['name']=data[i]['name']
                 d['branch']=data[i]['branch']
                 d['crole']=data[i]['crole']
+                d['year'] = data[i]
                 data[i] = d
             #print(data)
             return render(request,'confirmdelete.html',{'data':data,'club':club_name,'admin':admin_name})
